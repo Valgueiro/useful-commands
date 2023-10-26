@@ -33,7 +33,11 @@ fix-logi-options(){
 	kill -9 $(ps aux | grep "MacOS/logioptionsplus_agent" | grep -v grep | awk '{print $2}')
 }
 
+get-my-ip(){
+	dig +short myip.opendns.com @resolver1.opendns.com
+}
 # My aliases
+alias k="kubectl"
 
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
