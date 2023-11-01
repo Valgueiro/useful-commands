@@ -1,3 +1,5 @@
+source .env
+
 memento-timeout(){
         ## Add a bigger timeout to memento
         memento ssh-add
