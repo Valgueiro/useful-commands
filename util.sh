@@ -1,4 +1,5 @@
-source .env
+UTIL_PATH="/home/mvalgueiro/personal/useful-commands"
+source $UTIL_PATH/.env
 
 memento-timeout(){
         ## Add a bigger timeout to memento
