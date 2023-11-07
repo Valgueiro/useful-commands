@@ -1,10 +1,12 @@
 UTIL_PATH="/home/mvalgueiro/personal/useful-commands"
 source $UTIL_PATH/.env
 
-memento-timeout(){
-        ## Add a bigger timeout to memento
-        memento ssh-add
-        memento preference -timeout 35999
+setup-vim(){
+	cp $UTIL_PATH/.vimrc ~/.vimrc
+}
+
+setup-all(){
+	setup-vim
 }
 
 process-by-port(){
