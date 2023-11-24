@@ -41,6 +41,11 @@ fix-logi-options(){
 get-my-ip(){
 	dig +short myip.opendns.com @resolver1.opendns.com
 }
+
+todo(){
+        z todo && code . && cd -
+}
+
 # My aliases
 alias k="kubectl"
 
