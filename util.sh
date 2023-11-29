@@ -46,6 +46,11 @@ todo(){
         z todo && code . && cd -
 }
 
+cheat(){
+	# $1 command that you want to receive a cheatsheet from
+	curl cheat.sh/$1 | less
+}
+
 # My aliases
 alias k="kubectl"
 
