@@ -51,6 +51,10 @@ cheat(){
 	curl cheat.sh/$1 | less
 }
 
+zcode(){
+	z $1 && code . && cd -
+}
+
 # My aliases
 alias k="kubectl"
 
