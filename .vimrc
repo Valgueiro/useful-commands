@@ -3,6 +3,7 @@ set nu               " Enable line numbers
 set smarttab         " insert tabs on the start of a line according to shiftwidth
 set smartindent      " Automatically inserts one extra level of indentation in some cases
 set hidden           " Hides the current buffer when a new file is openned
+set hlsearch	     " highlight search
 set incsearch        " Incremental search
 set ignorecase       " Ingore case in search
 set smartcase        " Consider case if there is a upper case character

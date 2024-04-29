@@ -1,6 +1,7 @@
 UTIL_PATH="/home/mvalgueiro/personal/useful-commands"
 source $UTIL_PATH/.env
 
+
 setup-vim(){
 	cp $UTIL_PATH/.vimrc ~/.vimrc
 }
@@ -20,6 +21,12 @@ kill-process-by-port(){
         ## $1 - port number
 	sudo kill -3 $(process-by-port $1 | awk '{print $2}') 
 }
+# ansible
+shell-ansible(){
+	inventory_file=$1
+	cmd=$2
+	ansible -b -i $inventory_file all -m shell -a '$cmd'
+}
 
 # K8s
 
@@ -33,6 +40,14 @@ force-delete-pod(){
 delete-failed-pods(){
     kubectl delete pods  -A --field-selector status.phase=Failed
 }
+
+decode-secret() {
+	secret_name=$1
+	namespace=$2
+	key=$3
+	kubectl -n $namespace get secrets $secret_name --template={{.data.$3}} | base64 -d
+}
+
 
 fix-logi-options(){
 	kill -9 $(ps aux | grep "MacOS/logioptionsplus_agent" | grep -v grep | awk '{print $2}')
@@ -57,6 +72,7 @@ zcode(){
 
 # My aliases
 alias k="kubectl"
+alias tf="terraform"
 
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
