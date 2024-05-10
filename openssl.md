@@ -13,3 +13,5 @@ $ openssl x509 -in certificate.crt -text -noout
 # check private key
 $ openssl rsa -in privateKey.key -check
 ```
+
+FULL_chain = cert + rootca
