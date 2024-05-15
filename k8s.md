@@ -33,3 +33,9 @@ spec:
           readOnly: true
           mountPath: "/etc/secret-volume"
 ```
+
+## Delete evicted pods
+
+````bash
+kubectl delete pods  -A --field-selector status.phase=Failed
+```
