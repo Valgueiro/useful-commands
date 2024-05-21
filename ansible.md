@@ -1,5 +1,11 @@
 # Ansible
 
+## profile
+Add this to the ansible.cfg to add detailed profilling and list the time it took on each task.
+```cfg
+callbacks_enabled = ansible.posix.profile_tasks
+```
+
 ## retry count with multiple tasks/block
 
 ```ansible
