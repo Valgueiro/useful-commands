@@ -1,4 +1,4 @@
-# K8s
+# K9s
 
 ## Add secret as volume
 
@@ -39,3 +39,18 @@ spec:
 ````bash
 kubectl delete pods  -A --field-selector status.phase=Failed
 ```
+
+## Remove multiple finalizers
+
+```bash
+KIND=
+NS=
+RESOURCES=$(kubectl get ${KIND} -n $NS --no-headers -o custom-columns=":metadata.name")
+for r in $RESOURCES
+do
+  kubectl patch $KIND $r -n $NS \
+    --type json \
+    --patch='[ { "op": "remove", "path": "/metadata/finalizers" } ]'
+done
+```
+

@@ -3,11 +3,20 @@ source $UTIL_PATH/.env
 
 
 setup-vim(){
-	cp $UTIL_PATH/.vimrc ~/.vimrc
+	ln -fs $UTIL_PATH/dotfiles/.vimrc ~/.vimrc
 }
 
+setup-nvim(){
+	ln -fs $UTIL_PATH/dotfiles/nvim ~/.config/nvim
+}
+
+setup-tmux(){
+	ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
+}
 setup-all(){
 	setup-vim
+	setup-tmux
+	setup-nvim
 }
 
 process-by-port(){
@@ -58,8 +67,11 @@ get-my-ip(){
 }
 
 todo(){
-        z todo && code . && cd -
+	TODO_PATH=${1-"."}
+	z todo && nvim $TODO_PATH && cd -
 }
+
+alias tw="todo work.md"
 
 cheat(){
 	# $1 command that you want to receive a cheatsheet from
@@ -73,7 +85,8 @@ zcode(){
 # My aliases
 alias k="kubectl"
 alias tf="terraform"
-
+alias vim="nvim"
+alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
 
