@@ -10,3 +10,9 @@
 5. ESC out of it.
 
 it will in the end put the comment chars to all the lines that you selected
+
+## Sed!
+
+:%s/dasd/jasd/g
+
+Source: https://vim.fandom.com/wiki/Search_and_replace

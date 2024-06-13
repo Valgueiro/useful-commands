@@ -82,6 +82,12 @@ zcode(){
 	z $1 && code . && cd -
 }
 
+
+zvim(){
+	z $1 && vim . && z -
+}
+
+
 # My aliases
 alias k="kubectl"
 alias tf="terraform"
