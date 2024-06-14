@@ -44,8 +44,8 @@ return {
 
 
     local builtin = require("telescope.builtin")
-    vim.keymap.set("n", "<C-p>", builtin.find_files, { desc = 'Find Files'})
-    vim.keymap.set('n', '<leader>f', builtin.live_grep, { desc = 'Fuzzy Find in Project'})
+    vim.keymap.set("n", "<leader>p", builtin.find_files, { desc = '[P]Find Files'})
+    vim.keymap.set('n', '<leader>s', builtin.live_grep, { desc = '[S]earch in all files'})
   end
 }
  
