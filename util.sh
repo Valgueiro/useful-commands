@@ -98,3 +98,6 @@ alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
 
 ## Clear branches that were deleted on origin
 alias git-clean="git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '\$2 == \"[gone]\" {print \$1}' | xargs -r git branch -D"
+
+## make which to work just like zsh
+alias which="command -v"
