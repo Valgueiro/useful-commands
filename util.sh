@@ -13,10 +13,20 @@ setup-nvim(){
 setup-tmux(){
 	ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
 }
+
+setup-nvm(){
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+	#nvm alias default node
+	#nvm use --lts
+}
+
 setup-all(){
 	setup-vim
 	setup-tmux
 	setup-nvim
+	setup-nvm
 }
 
 process-by-port(){
@@ -87,9 +97,14 @@ zvim(){
 	z $1 && vim . && z -
 }
 
+run_always() {
+	setup-all
+}
+
 # Exports
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+export NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
 
 # My aliases
 alias k="kubectl"
@@ -104,3 +119,5 @@ alias git-clean="git fetch -p && git for-each-ref --format '%(refname:short) %(u
 
 ## make which to work just like zsh
 alias which="command -v"
+
+run_always
