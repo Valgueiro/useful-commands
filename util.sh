@@ -87,6 +87,9 @@ zvim(){
 	z $1 && vim . && z -
 }
 
+# Exports
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 # My aliases
 alias k="kubectl"
