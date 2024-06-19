@@ -148,6 +148,8 @@ return {
 				},
 
 				golangci_lint_ls = {},
+				goimports = {},
+				["goimports-reviser"] = {},
 				gopls = {},
 				["terraform-ls"] = {},
 				tflint = {},
