@@ -98,7 +98,8 @@ zvim(){
 }
 
 run_always() {
-	setup-all
+	# empty
+	echo "nothing to run"
 }
 
 # Exports
@@ -121,4 +122,4 @@ alias git-clean="git fetch -p && git for-each-ref --format '%(refname:short) %(u
 ## make which to work just like zsh
 alias which="command -v"
 
-run_always
+#run_always

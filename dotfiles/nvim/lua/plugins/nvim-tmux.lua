@@ -1,10 +1,11 @@
 return {
 	"alexghergh/nvim-tmux-navigation",
 	config = function()
-		require("nvim-tmux-navigation").setup({})
-		vim.keymap.set("n", "<C-Left>", "<Cmd>NvimTmuxNavigateLeft<CR>", {})
-		vim.keymap.set("n", "<C-Down>", "<Cmd>NvimTmuxNavigateDown<CR>", {})
-		vim.keymap.set("n", "<C-Up>", "<Cmd>NvimTmuxNavigateUp<CR>", {})
-		vim.keymap.set("n", "<C-Right>", "<Cmd>NvimTmuxNavigateRight<CR>", {})
+		local nvim_tmux_nav = require("nvim-tmux-navigation")
+		nvim_tmux_nav.setup({})
+		vim.keymap.set("n", "<M-Left>", nvim_tmux_nav.NvimTmuxNavigateLeft, {})
+		vim.keymap.set("n", "<M-Down>", nvim_tmux_nav.NvimTmuxNavigateDown, {})
+		vim.keymap.set("n", "<M-Up>", nvim_tmux_nav.NvimTmuxNavigateUp, {})
+		vim.keymap.set("n", "<M-Right>", nvim_tmux_nav.NvimTmuxNavigateRight, {})
 	end,
 }
