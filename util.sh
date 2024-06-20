@@ -110,6 +110,7 @@ export NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
 alias k="kubectl"
 alias tf="terraform"
 alias vim="nvim"
+alias nv="nvim"
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
