@@ -100,3 +100,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
+
+-- vim.keymap.set("n", "<Leader>b", ":buffers<CR>:buffer<Space>", { desc = "List buffers" })
+vim.keymap.set("n", "<C-W>z", "<C-W>o", { desc = "Zoom" })

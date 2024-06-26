@@ -2,6 +2,7 @@
 
 
 ## Comment to multiple lines once:
+I am now using commentary and the <leader>; to comment.
 
 1. CTRL + Q (CRTL+V but on windows) => go to visual block
 2. Select lines going to the direction
@@ -16,3 +17,7 @@ it will in the end put the comment chars to all the lines that you selected
 :%s/dasd/jasd/g
 
 Source: https://vim.fandom.com/wiki/Search_and_replace
+
+## Buffers and Windows
+
+https://dev.to/iggredible/using-buffers-windows-and-tabs-efficiently-in-vim-56jc
