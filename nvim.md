@@ -21,3 +21,11 @@ Source: https://vim.fandom.com/wiki/Search_and_replace
 ## Buffers and Windows
 
 https://dev.to/iggredible/using-buffers-windows-and-tabs-efficiently-in-vim-56jc
+
+## Filetypes
+
+For ansible:
+
+```
+:set filetype=yaml.ansible
+```

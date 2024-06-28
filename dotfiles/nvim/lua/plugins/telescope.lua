@@ -22,7 +22,8 @@ return {
 		{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 	},
 	config = function()
-		require("telescope").setup({
+		local telescope = require("telescope")
+		telescope.setup({
 			-- You can put your default mappings / updates / etc. in here
 			--  All the info you're looking for is in `:help telescope.setup()`
 			--
@@ -31,7 +32,11 @@ return {
 			--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
 			--   },
 			-- },
-			-- pickers = {}
+			pickers = {
+				find_files = {
+					hidden = true,
+				},
+			},
 			extensions = {
 				["ui-select"] = {
 					require("telescope.themes").get_dropdown(),
@@ -39,8 +44,8 @@ return {
 			},
 		})
 
-		pcall(require("telescope").load_extension, "fzf")
-		pcall(require("telescope").load_extension, "ui-select")
+		pcall(telescope.load_extension, "fzf")
+		pcall(telescope.load_extension, "ui-select")
 
 		local builtin = require("telescope.builtin")
 		vim.keymap.set("n", "<leader>p", builtin.find_files, { desc = "[P]Find Files" })
