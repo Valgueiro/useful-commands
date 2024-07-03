@@ -43,23 +43,23 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
-vim.cmd("set nu")
-vim.cmd("set relativenumber")
+-- Sets how neovim will display certain whitespace characters in the editor.
+--  See `:help 'list'`
+--  and `:help 'listchars'`
+vim.opt.list = true
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+
+--- Custom
+vim.opt.relativenumber = true
+vim.opt.number = true
+vim.opt.smarttab = true
+vim.opt.smartindent = true
 vim.cmd("set smarttab")
 vim.cmd("set smartindent")
 vim.cmd("set hidden")
-vim.cmd("set hlsearch")
 vim.cmd("set incsearch")
-vim.cmd("set ignorecase")
-vim.cmd("set smartcase")
-vim.cmd("set updatetime=100")
 vim.cmd("set encoding=utf-8")
-vim.cmd("set nobackup")
-vim.cmd("set nowritebackup")
-vim.cmd("set splitright")
-vim.cmd("set splitbelow")
 vim.cmd("set autoread")
-vim.cmd("filetype on")
 
 -- KEY MAPS
 
