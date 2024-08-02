@@ -122,4 +122,10 @@ alias git-clean="git fetch -p && git for-each-ref --format '%(refname:short) %(u
 ## make which to work just like zsh
 alias which="command -v"
 
+# flux
+alias frk="flux reconcile kustomization"
+alias frsg="flux reconcile source git"
+alias fsk="flux suspend kustomization"
+alias frek="flux resume kustomization"
+
 #run_always
