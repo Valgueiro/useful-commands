@@ -56,7 +56,7 @@ return {
 		pcall(telescope.load_extension, "ui-select")
 
 		local builtin = require("telescope.builtin")
-		vim.keymap.set("n", "<leader>p", builtin.find_files, { desc = "[P]Find Files" })
+		vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "[f]Find Files" })
 		vim.keymap.set("n", "<leader>s", builtin.live_grep, { desc = "[S]earch in all files" })
 		vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "[B]uffers" })
 		vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "[B]uffer [D]elete" })
