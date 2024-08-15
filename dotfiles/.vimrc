@@ -1,4 +1,4 @@
-syntax on
+syntax off
 set nu               " Enable line numbers
 set smarttab         " insert tabs on the start of a line according to shiftwidth
 set smartindent      " Automatically inserts one extra level of indentation in some cases

@@ -178,6 +178,23 @@ return {
 				-- But for many setups, the LSP (`tsserver`) will work just fine
 				-- tsserver = {},
 				--
+				templ = {},
+				html = {
+					filetypes = { "html", "templ" },
+				},
+				htmx = {
+					filetypes = { "html", "templ" },
+				},
+				tailwindcss = {
+					filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+					settings = {
+						tailwindCSS = {
+							includeLanguages = {
+								templ = "html",
+							},
+						},
+					},
+				},
 
 				lua_ls = {
 					-- cmd = {...},
@@ -368,6 +385,12 @@ return {
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "path" },
+				},
+			})
+
+			vim.filetype.add({
+				extension = {
+					templ = "templ",
 				},
 			})
 		end,

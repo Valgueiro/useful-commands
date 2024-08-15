@@ -60,6 +60,7 @@ vim.cmd("set hidden")
 vim.cmd("set incsearch")
 vim.cmd("set encoding=utf-8")
 vim.cmd("set autoread")
+vim.cmd("set syntax=OFF")
 
 -- KEY MAPS
 
