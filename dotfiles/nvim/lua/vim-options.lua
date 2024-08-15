@@ -103,7 +103,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- vim.keymap.set("n", "<Leader>b", ":buffers<CR>:buffer<Space>", { desc = "List buffers" })
-vim.keymap.set({ "v", "n", "i", "x" }, "<leader>p", [["_dP]])
+vim.keymap.set({ "v", "n", "x" }, "<leader>p", [["_dP]])
 vim.keymap.set("n", "<C-W>z", "<C-W>o", { desc = "Zoom" })
 
 vim.keymap.set("n", "n", "nzzzv")
