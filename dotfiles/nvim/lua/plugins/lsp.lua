@@ -151,6 +151,7 @@ return {
 				-- clangd = {},
 				-- gopls = {},
 				pyright = {},
+				biome = {},
 				-- rust_analyzer = {},
 
 				helm_ls = {
@@ -386,6 +387,11 @@ return {
 				},
 			})
 		end,
+	},
+	{
+		"pmizio/typescript-tools.nvim",
+		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+		opts = {},
 	},
 	-- { "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async", opts = {} },
 }
