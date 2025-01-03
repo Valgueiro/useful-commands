@@ -4,6 +4,11 @@ return {
 	opts = {
 		ensure_installed = {
 			"go",
+			"groovy",
+			"json",
+			"json5",
+			"kotlin",
+			"yaml",
 			"lua",
 			"javascript",
 			"python",
@@ -14,6 +19,7 @@ return {
 			"bash",
 			"markdown",
 			"templ",
+			"c_sharp",
 		},
 
 		highlight = {
