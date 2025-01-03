@@ -213,6 +213,33 @@ return {
 						},
 					},
 				},
+				yamlls = {},
+				yamlfix = {},
+				yamlfmt = {},
+
+				harper_ls = {},
+				-- omnisharp = {},
+				csharpier = {},
+				["clang-format"] = {},
+
+				-- azure_pipelines_ls = {
+				-- root_dir = require("lspconfig").util.root_pattern("azure-pipelines.y*l"),
+				-- cmd = { "azure-pipelines-language-server", "--stdio" },
+				-- filetypes = { "yaml" },
+				-- settings = {
+				-- yaml = {
+				-- schemas = {
+				-- ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/main/service-schema.json"] = {
+				-- "/azure-pipeline*.y*l",
+				-- "/*.azure*",
+				-- "Azure-Pipelines/**/*.y*l",
+				-- "Pipelines/*.y*l",
+				-- ".azure-devops/**/*.y*l",
+				-- },
+				-- },
+				-- },
+				-- },
+				-- },
 			}
 
 			require("mason").setup()
