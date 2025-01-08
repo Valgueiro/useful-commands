@@ -13,12 +13,11 @@ return {
 			},
 
 			-- Useful status updates for LSP.
-			-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
 			{ "j-hui/fidget.nvim", opts = {} },
 
 			-- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
 			-- used for completion, annotations and signatures of Neovim apis
-			{ "folke/neodev.nvim", opts = {} },
+			-- { "folke/neodev.nvim", opts = {} },
 
 			"towolf/vim-helm",
 			{ "Hoffs/omnisharp-extended-lsp.nvim", lazy = true },
@@ -133,6 +132,7 @@ return {
 			--  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+			capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
 
 			capabilities.textDocument.foldingRange = {
 				dynamicRegistration = false,
@@ -186,9 +186,9 @@ return {
 				html = {
 					filetypes = { "html", "templ" },
 				},
-				htmx = {
-					filetypes = { "html", "templ" },
-				},
+				-- htmx = {
+				-- filetypes = { "html", "templ" },
+				-- },
 				tailwindcss = {
 					filetypes = { "templ", "astro", "javascript", "typescript", "react" },
 					settings = {
@@ -219,25 +219,25 @@ return {
 				yamlfmt = {},
 
 				harper_ls = {},
-				omnisharp = {
-					handlers = {
-						["textDocument/definition"] = function(...)
-							return require("omnisharp_extended").handler(...)
-						end,
-					},
-					keys = {
-						{
-							"gd",
-							require("omnisharp_extended").telescope_lsp_definitions(),
-							desc = "Goto Definition",
-						},
-					},
-					enable_roslyn_analyzers = true,
-					organize_imports_on_format = true,
-					enable_import_completion = true,
-				},
-				csharpier = {},
-				["clang-format"] = {},
+				-- omnisharp = {
+				-- handlers = {
+				-- ["textDocument/definition"] = function(...)
+				-- return require("omnisharp_extended").handler(...)
+				-- end,
+				-- },
+				-- keys = {
+				-- {
+				-- "gd",
+				-- require("omnisharp_extended").telescope_lsp_definitions(),
+				-- desc = "Goto Definition",
+				-- },
+				-- },
+				-- enable_roslyn_analyzers = true,
+				-- organize_imports_on_format = true,
+				-- enable_import_completion = true,
+				-- },
+				-- csharpier = {},
+				-- ["clang-format"] = {},
 
 				-- azure_pipelines_ls = {
 				-- root_dir = require("lspconfig").util.root_pattern("azure-pipelines.y*l"),
@@ -286,7 +286,18 @@ return {
 
 	{ -- Autoformat
 		"stevearc/conform.nvim",
-		lazy = false,
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
+		keys = {
+			{
+				"<leader>f",
+				function()
+					require("conform").format({ async = true, lsp_format = "fallback" })
+				end,
+				mode = "",
+				desc = "[F]ormat buffer",
+			},
+		},
 		opts = {
 			notify_on_error = false,
 			format_on_save = function(bufnr)
@@ -294,16 +305,22 @@ return {
 				-- have a well standardized coding style. You can add additional
 				-- languages here or re-enable it for the disabled ones.
 				local disable_filetypes = { c = true, cpp = true }
+				local lsp_format_opt
+				if disable_filetypes[vim.bo[bufnr].filetype] then
+					lsp_format_opt = "never"
+				else
+					lsp_format_opt = "fallback"
+				end
 				return {
 					timeout_ms = 500,
-					lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+					lsp_format = lsp_format_opt,
 				}
 			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
 				go = { "gofmt", "goimports" },
 				terraform = { "terraform_fmt" },
-				markdown = { "markdownlint" },
+				-- markdown = { "markdownlint" },
 				templ = { "templ" },
 				yaml = { "yamlfmt" },
 				-- Conform can also run multiple formatters sequentially

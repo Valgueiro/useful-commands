@@ -7,7 +7,6 @@ return {
 			"groovy",
 			"json",
 			"json5",
-			"kotlin",
 			"yaml",
 			"lua",
 			"javascript",
@@ -18,8 +17,6 @@ return {
 			"gitignore",
 			"bash",
 			"markdown",
-			"templ",
-			"c_sharp",
 		},
 
 		highlight = {

@@ -1,4 +1,5 @@
 vim.opt.shiftwidth = 2
+
 vim.opt.softtabstop = 2
 vim.opt.tabstop = 2
 vim.g.mapleader = " "
@@ -7,7 +8,9 @@ vim.g.have_nerd_font = true
 vim.opt.showmode = false
 
 --  See `:help 'clipboard'`
-vim.opt.clipboard = "unnamedplus"
+vim.schedule(function()
+	vim.opt.clipboard = "unnamedplus"
+end)
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -60,6 +63,8 @@ vim.cmd("set incsearch")
 vim.cmd("set encoding=utf-8")
 vim.cmd("set autoread")
 vim.cmd("set syntax=OFF")
+
+vim.opt.termguicolors = true
 
 -- KEY MAPS
 

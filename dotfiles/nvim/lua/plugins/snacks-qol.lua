@@ -2,15 +2,17 @@ return {
 	"folke/snacks.nvim",
 	opts = {
 		indent = { enabled = true },
-		input = { enabled = true },
-		quickfile = { enabled = true },
-		notifier = { enabled = true },
-		scope = { enabled = false },
-		scroll = { enabled = true },
-		statuscolumn = { enabled = true }, -- we set this in options.lua
-		words = { enabled = true },
-		dashboard = { enabled = false },
 		bigfile = { enabled = true },
+		--- disable
+		input = { enabled = false },
+		quickfile = { enabled = false },
+		notifier = { enabled = false },
+		notify = { enabled = false },
+		scope = { enabled = false },
+		scroll = { enabled = false },
+		statuscolumn = { enabled = false }, -- we set this in options.lua
+		dashboard = { enabled = false },
+		words = { enabled = false },
 	},
 	keys = {
 		{
