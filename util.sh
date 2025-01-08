@@ -114,6 +114,7 @@ alias vim="nvim"
 alias nv="nvim"
 alias td="tmux detach"
 alias ta="tmux attach -t 0"
+alias python="python3"
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
 
