@@ -76,13 +76,6 @@ get-my-ip(){
 	dig +short myip.opendns.com @resolver1.opendns.com
 }
 
-todo(){
-	TODO_PATH=${1-"."}
-	z todo && nvim $TODO_PATH && cd -
-}
-
-alias tw="todo work.md"
-
 cheat(){
 	# $1 command that you want to receive a cheatsheet from
 	curl cheat.sh/$1 | less
