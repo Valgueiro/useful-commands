@@ -33,6 +33,9 @@ return {
 					hide_dotfiles = false,
 					hide_gitignored = true,
 				},
+				follow_current_file = {
+					enabled = true,
+				},
 			},
 		})
 		vim.keymap.set("n", "<C-n>", ":Neotree filesystem reveal left toggle<CR>", {})
