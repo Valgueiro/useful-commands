@@ -98,6 +98,8 @@ run_always() {
 # Exports
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+export EDITOR=nvim
+export KUBE_EDITOR=nvim
 export NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
 
 # My aliases
