@@ -9,6 +9,13 @@
 \l+ 
 ```
 
+## List users
+```
+\du
+
+\du+
+```
+
 ## list active connections
 
 ```
