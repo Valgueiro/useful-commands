@@ -1,54 +1,33 @@
 return {
-	"nvim-neo-tree/neo-tree.nvim",
-	branch = "v3.x",
+	"nvim-tree/nvim-tree.lua",
 	dependencies = {
-		"nvim-lua/plenary.nvim",
-		"nvim-tree/nvim-web-devicons",
-		"MunifTanjim/nui.nvim",
-		{
-			"s1n7ax/nvim-window-picker",
-			version = "2.*",
-			config = function()
-				require("window-picker").setup({
-					filter_rules = {
-						include_current_win = false,
-						autoselect_one = true,
-						bo = {
-							filetype = { "neo-tree", "neo-tree-popup", "notify" },
-							buftype = { "terminal", "quickfix" },
-						},
-					},
-				})
-			end,
+		"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+	},
+	config = {
+		sort = {
+			sorter = "case_sensitive",
+		},
+		view = {
+			width = 30,
+		},
+		renderer = {
+			group_empty = false,
+		},
+		filters = {
+			dotfiles = false,
+			custom = { ".git" },
+			exclude = { "gitrepos" },
+		},
+		update_focused_file = {
+			enable = true,
+			update_root = {
+				enable = true,
+				ignore_list = {},
+			},
+			ignore_list = {},
 		},
 	},
-	config = function()
-		require("neo-tree").setup({
-			close_if_last_window = false,
-			enable_git_status = true,
-			enable_diagnostics = true,
-			filesystem = {
-				filtered_items = {
-					visible = true,
-					hide_dotfiles = false,
-					hide_gitignored = true,
-				},
-				follow_current_file = {
-					enabled = true,
-				},
-			},
-		})
-		vim.keymap.set("n", "<C-n>", ":Neotree filesystem reveal left toggle<CR>", {})
-
-		vim.api.nvim_create_augroup("neotree", {})
-		vim.api.nvim_create_autocmd("UiEnter", {
-			desc = "Open Neotree automatically",
-			group = "neotree",
-			callback = function()
-				if vim.fn.argc() == 0 then
-					vim.cmd("Neotree toggle")
-				end
-			end,
-		})
-	end,
+	keys = {
+		{ "<C-n>", "<cmd>NvimTreeToggle<cr>", desc = "File Tree Toggle" },
+	},
 }

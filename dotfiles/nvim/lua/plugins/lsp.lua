@@ -151,8 +151,10 @@ return {
 			local servers = {
 				-- clangd = {},
 				-- gopls = {},
-				pyright = {},
-				biome = {},
+				pyright = {
+					filetypes = { "html", "templ" },
+				},
+				-- biome = {},
 				-- rust_analyzer = {},
 
 				helm_ls = {
@@ -169,10 +171,10 @@ return {
 				goimports = {},
 				["goimports-reviser"] = {},
 				gopls = {},
-				["terraform-ls"] = {},
+				-- ["terraform-ls"] = {}, # too much performance hit
 				tflint = {},
 				["ansible-language-server"] = {},
-				-- ["ansible-lint"] = {},
+				["ansible-lint"] = {},
 
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 				--
@@ -218,7 +220,7 @@ return {
 				yamlfix = {},
 				yamlfmt = {},
 
-				harper_ls = {},
+				-- harper_ls = {},
 				-- omnisharp = {
 				-- handlers = {
 				-- ["textDocument/definition"] = function(...)
@@ -239,8 +241,14 @@ return {
 				-- csharpier = {},
 				-- ["clang-format"] = {},
 
+				-- Waiting for updates here: https://github.com/microsoft/azure-pipelines-language-server/issues/160
 				-- azure_pipelines_ls = {
 				-- root_dir = require("lspconfig").util.root_pattern("azure-pipelines.y*l"),
+				-- root_dir = require("lspconfig.util").root_pattern({
+				-- "azure-pipeline.yaml",
+				-- "compute-ec-functions-azurepipeline.yml",
+				-- }),
+				-- single_file_support = true,
 				-- cmd = { "azure-pipelines-language-server", "--stdio" },
 				-- filetypes = { "yaml" },
 				-- settings = {
@@ -258,7 +266,7 @@ return {
 				-- },
 				-- },
 			}
-
+			--
 			require("mason").setup()
 
 			-- You can add other tools here that you want Mason to install
@@ -318,11 +326,7 @@ return {
 			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
-				go = { "gofmt", "goimports" },
-				terraform = { "terraform_fmt" },
 				-- markdown = { "markdownlint" },
-				templ = { "templ" },
-				yaml = { "yamlfmt" },
 				-- Conform can also run multiple formatters sequentially
 				-- python = { "isort", "black" },
 				--

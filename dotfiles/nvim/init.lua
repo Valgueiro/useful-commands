@@ -2,6 +2,10 @@
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- optionally enable 24-bit colour
+vim.opt.termguicolors = true
+
+vim.loader.enable()
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	vim.fn.system({
@@ -38,3 +42,10 @@ require("lazy").setup("plugins", {
 		},
 	},
 })
+
+local function open_nvim_tree()
+	-- open the tree
+	require("nvim-tree.api").tree.open()
+end
+
+vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
