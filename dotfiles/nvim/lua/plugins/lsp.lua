@@ -459,4 +459,19 @@ return {
 		opts = {},
 	},
 	-- { "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async", opts = {} },
+	-- {
+	-- "dense-analysis/ale",
+	-- config = function()
+	-- Configuration goes here.
+	-- local g = vim.g
+	--
+	-- g.ale_ruby_rubocop_auto_correct_all = 1
+	--
+	-- g.ale_linters = {
+	-- dockerfile = { "hadolint" },
+	-- ruby = { "rubocop", "ruby" },
+	-- lua = { "lua_language_server" },
+	-- }
+	-- end,
+	-- },
 }
