@@ -152,7 +152,7 @@ return {
 				-- clangd = {},
 				-- gopls = {},
 				pyright = {
-					filetypes = { "html", "templ" },
+					filetypes = { "html", "templ", "python" },
 				},
 				-- biome = {},
 				-- rust_analyzer = {},
@@ -457,6 +457,10 @@ return {
 		"pmizio/typescript-tools.nvim",
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 		opts = {},
+	},
+	{ -- disable yamlls on helm files by fixing filetype before entering
+		"towolf/vim-helm",
+		ft = "helm",
 	},
 	-- { "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async", opts = {} },
 	-- {
