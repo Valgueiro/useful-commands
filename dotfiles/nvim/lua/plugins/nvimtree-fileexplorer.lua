@@ -31,7 +31,7 @@ return {
 		},
 		filters = {
 			dotfiles = false,
-			custom = { ".git" },
+			custom = {},
 			exclude = { "gitrepos", "requirements.txt" },
 		},
 		update_focused_file = {
