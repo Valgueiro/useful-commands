@@ -173,7 +173,10 @@ return {
 				gopls = {},
 				-- ["terraform-ls"] = {}, # too much performance hit
 				tflint = {},
-				["ansible-language-server"] = {},
+				ansiblels = {
+					filetypes = { "yaml", "yaml.ansible" },
+				},
+
 				["ansible-lint"] = {},
 
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -201,6 +204,8 @@ return {
 						},
 					},
 				},
+				bashls = {},
+				shellcheck = {},
 
 				lua_ls = {
 					-- cmd = {...},
@@ -216,11 +221,19 @@ return {
 						},
 					},
 				},
-				yamlls = {},
+				yamlls = {
+					settings = {
+						yaml = {
+							schemas = {
+								["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/refs/heads/master/v1.32.1-standalone-strict/all.json"] = "/*.k8s.yaml",
+							},
+						},
+					},
+				},
 				yamlfix = {},
 				yamlfmt = {},
 
-				-- harper_ls = {},
+				harper_ls = {},
 				-- omnisharp = {
 				-- handlers = {
 				-- ["textDocument/definition"] = function(...)
