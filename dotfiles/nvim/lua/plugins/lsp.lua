@@ -3,8 +3,8 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
-			{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
-			"williamboman/mason-lspconfig.nvim",
+			{ "mason-org/mason.nvim", config = true, version = "~1.0.0" }, -- NOTE: Must be loaded before dependants
+			{ "mason-org/mason-lspconfig.nvim", version = "~1.0.0" },
 			{
 				"WhoIsSethDaniel/mason-tool-installer.nvim",
 				opts = {
@@ -233,7 +233,7 @@ return {
 				yamlfix = {},
 				yamlfmt = {},
 
-				harper_ls = {},
+				["harper-ls"] = {},
 				-- omnisharp = {
 				-- handlers = {
 				-- ["textDocument/definition"] = function(...)
@@ -250,33 +250,6 @@ return {
 				-- enable_roslyn_analyzers = true,
 				-- organize_imports_on_format = true,
 				-- enable_import_completion = true,
-				-- },
-				-- csharpier = {},
-				-- ["clang-format"] = {},
-
-				-- Waiting for updates here: https://github.com/microsoft/azure-pipelines-language-server/issues/160
-				-- azure_pipelines_ls = {
-				-- root_dir = require("lspconfig").util.root_pattern("azure-pipelines.y*l"),
-				-- root_dir = require("lspconfig.util").root_pattern({
-				-- "azure-pipeline.yaml",
-				-- "compute-ec-functions-azurepipeline.yml",
-				-- }),
-				-- single_file_support = true,
-				-- cmd = { "azure-pipelines-language-server", "--stdio" },
-				-- filetypes = { "yaml" },
-				-- settings = {
-				-- yaml = {
-				-- schemas = {
-				-- ["https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/main/service-schema.json"] = {
-				-- "/azure-pipeline*.y*l",
-				-- "/*.azure*",
-				-- "Azure-Pipelines/**/*.y*l",
-				-- "Pipelines/*.y*l",
-				-- ".azure-devops/**/*.y*l",
-				-- },
-				-- },
-				-- },
-				-- },
 				-- },
 			}
 			--
@@ -370,12 +343,12 @@ return {
 					-- `friendly-snippets` contains a variety of premade snippets.
 					--    See the README about individual language/framework/plugin snippets:
 					--    https://github.com/rafamadriz/friendly-snippets
-					-- {
-					--   'rafamadriz/friendly-snippets',
-					--   config = function()
-					--     require('luasnip.loaders.from_vscode').lazy_load()
-					--   end,
-					-- },
+					{
+						"rafamadriz/friendly-snippets",
+						config = function()
+							require("luasnip.loaders.from_vscode").lazy_load()
+						end,
+					},
 				},
 			},
 			"saadparwaiz1/cmp_luasnip",
