@@ -15,12 +15,13 @@ return {
 			diagnostics = "nvim_lsp",
 			offsets = {
 				{
-					filetype = "neo-tree",
-					text = "Nvim Tree",
+					filetype = "NvimTree",
+					text = "File Explorer",
 					separator = true,
 					text_align = "left",
 				},
 			},
+			separator_style = "slant",
 
 			diagnostics_indicator = function(count, level)
 				local icon = level:match("error") and " " or " "
