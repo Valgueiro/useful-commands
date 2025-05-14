@@ -97,10 +97,11 @@ run_always() {
 
 # Exports
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+export PATH="$PATH:$GOROOT/bin:$GOPATH/bin:$UTIL_PATH/scripts"
 export EDITOR=nvim
 export KUBE_EDITOR=nvim
 export NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
+export _ZO_ECHO=1
 
 # My aliases
 alias k="kubectl"
@@ -109,6 +110,7 @@ alias vim="nvim"
 alias nv="nvim"
 alias td="tmux detach"
 alias ta="tmux attach -t 0 || tmux"
+alias ts="tmux-sessionizer"
 alias python="python3"
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
