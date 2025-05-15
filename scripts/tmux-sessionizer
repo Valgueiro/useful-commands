@@ -23,7 +23,12 @@ hydrate() {
 }
 
 if [[ $# -eq 1 ]]; then
-    selected=$1
+    query=$(\command $ZOXIDE query $1)
+    if [ $? -eq 1 ]; then
+        echo "zoxide query did not find anything"
+        exit 1
+    fi
+    selected=$query
 else
     selected=$(\command $ZOXIDE query --interactive)
 fi
