@@ -41,7 +41,8 @@ selected_name=$(basename "$selected" | tr . _)
 tmux_running=$(pgrep tmux)
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux -t 0 new-window -n $selected_name -c $selected
+    tmux new-session -d
+    tmux new-window -n $selected_name -c $selected
     hydrate $selected_name $selected
 elif ! has_session $selected_name; then
     tmux new-window -n $selected_name -c $selected
