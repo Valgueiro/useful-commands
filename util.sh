@@ -111,6 +111,8 @@ alias nv="nvim"
 alias td="tmux detach"
 alias ta="tmux attach -t 0 || tmux"
 alias ts="tmux-sessionizer"
+alias change-to-gui="sudo systemctl isolate graphical.target"
+alias change-to-cli="sudo systemctl isolate multi-user.target"
 alias python="python3"
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
