@@ -38,3 +38,26 @@ systemd.unit=multi-user.target
 The kernel parameter has precedence over the default target.
 
 This can be used to boot to a specific target once by editing the grub boot entry before boot. Or you could add multiple boot entries for different targets.
+
+Source: https://askubuntu.com/questions/1242965/how-to-enable-or-disable-gui-in-ubuntu
+
+### Disable IPV6
+
+Already had some problems when running in a VM inside VMWARE player Pro where it could not access anything when trying IPV6, Not sure why. But anyhow, just disable it:
+
+
+I successfully disabled IPv6 once putting the following lines in /etc/sysctl.conf:
+
+```conf
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
+
+also run this command to load changes
+
+```bash
+sudo sysctl -p
+```
+
+source: https://askubuntu.com/questions/309461/how-to-disable-ipv6-permanently
