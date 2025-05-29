@@ -3,8 +3,8 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
-			{ "mason-org/mason.nvim", config = true, version = "~1.0.0" }, -- NOTE: Must be loaded before dependants
-			{ "mason-org/mason-lspconfig.nvim", version = "~1.0.0" },
+			{ "mason-org/mason.nvim", config = true, version = "~2.0.0" }, -- NOTE: Must be loaded before dependants
+			{ "mason-org/mason-lspconfig.nvim", version = "~2.0.0" },
 			{
 				"WhoIsSethDaniel/mason-tool-installer.nvim",
 				opts = {
@@ -162,7 +162,6 @@ return {
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
 				-- clangd = {},
-				-- gopls = {},
 				pyright = {
 					filetypes = { "html", "templ", "python" },
 				},
@@ -182,7 +181,9 @@ return {
 				golangci_lint_ls = {},
 				goimports = {},
 				["goimports-reviser"] = {},
-				gopls = {},
+				gopls = {
+					filetypes = { "go", "gomod", "gowork", "gotmpl" },
+				},
 				-- ["terraform-ls"] = {}, # too much performance hit
 				tflint = {},
 				ansiblels = {

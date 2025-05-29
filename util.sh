@@ -1,15 +1,6 @@
 UTIL_PATH="/home/mvalgueiro/personal/useful-commands"
 source $UTIL_PATH/.env
 
-
-setup-vim(){
-	ln -fs $UTIL_PATH/dotfiles/.vimrc ~/.vimrc
-}
-
-setup-nvim(){
-	ln -fs $UTIL_PATH/dotfiles/nvim ~/.config/nvim
-}
-
 setup-tmux(){
 	ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
 }
@@ -23,9 +14,7 @@ setup-nvm(){
 }
 
 setup-all(){
-	setup-vim
 	setup-tmux
-	setup-nvim
 	setup-nvm
 }
 
