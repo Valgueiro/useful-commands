@@ -61,3 +61,8 @@ sudo sysctl -p
 ```
 
 source: https://askubuntu.com/questions/309461/how-to-disable-ipv6-permanently
+
+### Troubleshooting 
+
+![image](https://github.com/user-attachments/assets/e20de41f-0697-43bc-b4e5-d8b68db8cf4b)
+
