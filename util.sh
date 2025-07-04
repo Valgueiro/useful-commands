@@ -1,9 +1,17 @@
-UTIL_PATH="/home/mvalgueiro/personal/useful-commands"
-source $UTIL_PATH/.env
+UTIL_PATH="$HOME/git/personal/useful-commands"
+# source $UTIL_PATH/.env
 
 setup-tmux(){
 	ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
+
+
+setup-nvim(){
+	ln -fs $UTIL_PATH/dotfiles/nvim ~/.config/nvim
+	ln -fs $UTIL_PATH/dotfiles/vimrc ~/.vimrc
+}
+
 
 setup-nvm(){
 	export NVM_DIR="$HOME/.nvm"

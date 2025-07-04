@@ -201,29 +201,26 @@ return {
 				-- tsserver = {},
 				--
 				templ = {},
-				html = {
-					filetypes = { "html", "templ" },
-				},
+				-- html = {
+				-- filetypes = { "html", "templ" },
+				-- },
 				-- htmx = {
 				-- filetypes = { "html", "templ" },
 				-- },
-				tailwindcss = {
-					filetypes = { "templ", "astro", "javascript", "typescript", "react" },
-					settings = {
-						tailwindCSS = {
-							includeLanguages = {
-								templ = "html",
-							},
-						},
-					},
-				},
+				-- tailwindcss = {
+				-- filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+				-- settings = {
+				-- tailwindCSS = {
+				-- includeLanguages = {
+				-- templ = "html",
+				-- },
+				-- },
+				-- },
+				-- },
 				bashls = {},
 				shellcheck = {},
 
 				lua_ls = {
-					-- cmd = {...},
-					-- filetypes = { ...},
-					-- capabilities = {},
 					settings = {
 						Lua = {
 							completion = {
@@ -400,20 +397,4 @@ return {
 		"towolf/vim-helm",
 		ft = "helm",
 	},
-	-- { "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async", opts = {} },
-	-- {
-	-- "dense-analysis/ale",
-	-- config = function()
-	-- Configuration goes here.
-	-- local g = vim.g
-	--
-	-- g.ale_ruby_rubocop_auto_correct_all = 1
-	--
-	-- g.ale_linters = {
-	-- dockerfile = { "hadolint" },
-	-- ruby = { "rubocop", "ruby" },
-	-- lua = { "lua_language_server" },
-	-- }
-	-- end,
-	-- },
 }
