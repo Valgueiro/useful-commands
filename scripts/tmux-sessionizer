@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ZOXIDE="/usr/bin/zoxide"
+ZOXIDE="/opt/homebrew/Cellar/zoxide/0.9.8/bin/zoxide"
 switch_to() {
     if [[ -z $TMUX ]]; then
         tmux attach-session -t 0:$1

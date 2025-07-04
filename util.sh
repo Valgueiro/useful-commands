@@ -12,6 +12,15 @@ setup-nvim(){
 	ln -fs $UTIL_PATH/dotfiles/vimrc ~/.vimrc
 }
 
+init-language-servers(){
+	setup-nvm
+	npm i -g bash-language-server
+
+	go install golang.org/x/tools/gopls@latest
+	go install golang.org/x/tools/cmd/goimports@latest
+
+	pip3 install ansible-lint
+}
 
 setup-nvm(){
 	export NVM_DIR="$HOME/.nvm"
@@ -97,7 +106,6 @@ export GOPATH=$HOME/go
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin:$UTIL_PATH/scripts"
 export EDITOR=nvim
 export KUBE_EDITOR=nvim
-export NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
 export _ZO_ECHO=1
 
 # My aliases
@@ -118,7 +126,7 @@ alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
 alias git-clean="git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '\$2 == \"[gone]\" {print \$1}' | xargs -r git branch -D"
 
 ## make which to work just like zsh
-alias which="command -v"
+# alias which="command -v"
 
 # flux
 alias frk="flux reconcile kustomization"
