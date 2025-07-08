@@ -122,3 +122,11 @@ vim.keymap.set("n", "Q", "<nop>")
 -- vim.keymap.set("n", "<C-Up>", "<Cmd>NvimTmuxNavigateUp<CR>", {})
 vim.keymap.set("n", "<C-Left>", "b", {})
 vim.keymap.set("n", "<C-Right>", "e", {})
+
+-- Folding configuration
+vim.opt.foldcolumn = "1" -- '0' is not bad
+vim.opt.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.opt.foldlevelstart = 99
+
+vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+vim.opt.foldenable = true
