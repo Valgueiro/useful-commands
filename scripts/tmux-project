@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+# ABOUTME: Resolves a project directory to the one tmux window that represents it.
+# ABOUTME: Creates that window on demand and flags it when Claude Code needs attention.
+
+set -euo pipefail
+
+# Claude Code hooks and tmux run-shell start from a minimal PATH.
+PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+
+SESSION="code"
+MARKER="🔔 "
+LOCK="${TMPDIR:-/tmp}/tmux-project.lock"
+
+usage() {
+  cat >&2 <<'EOF'
+usage: tmux-project <command> [path]
+
+  label  <path>            print the window label for a directory
+  ensure <path>            print the window for a directory, creating it if absent
+  select <path>            ensure the window, then make it the current one
+  attach <path>            ensure and select the window, then attach the session
+  mark   <path>            flag the window as waiting for review
+  clear  <path|window-id>  remove the waiting-for-review flag
+
+Path defaults to the current directory.
+EOF
+  exit 64
+}
+
+# The git toplevel is the window's identity: every subdirectory of a worktree
+# resolves to the same window.
+project_root() {
+  git -C "$1" rev-parse --show-toplevel 2>/dev/null || (cd "$1" && pwd -P)
+}
+
+# A worktree's directory name carries a generated hash, so the label comes from
+# git instead: the repository that owns the worktree, plus the branch.
+project_label() {
+  local root=$1 git_dir common_dir repo branch
+  if ! git_dir=$(git -C "$root" rev-parse --absolute-git-dir 2>/dev/null); then
+    basename "$root"
+    return
+  fi
+  common_dir=$(git -C "$root" rev-parse --path-format=absolute --git-common-dir)
+  repo=$(basename "$(dirname "$common_dir")")
+  if [[ $git_dir == "$common_dir" ]]; then
+    echo "$repo"
+    return
+  fi
+  branch=$(git -C "$root" symbolic-ref --short HEAD 2>/dev/null) ||
+    branch=$(git -C "$root" rev-parse --short HEAD)
+  echo "$repo/$branch"
+}
+
+# Windows are matched on @project_path rather than on their name, so renaming a
+# window to add the review marker cannot break the lookup.
+window_for_root() {
+  { tmux list-windows -a -F "#{window_id}"$'\t'"#{@project_path}" 2>/dev/null || true; } |
+    awk -F'\t' -v root="$1" '$2 == root { print $1; exit }'
+}
+
+create_window() {
+  local root=$1 label id
+  label=$(project_label "$root")
+  if tmux has-session -t "=$SESSION" 2>/dev/null; then
+    id=$(tmux new-window -d -t "=$SESSION" -c "$root" -n "$label" -P -F '#{window_id}')
+  else
+    # Name the session's first window on creation, otherwise the session starts
+    # with an unrelated default window.
+    id=$(tmux new-session -d -s "$SESSION" -c "$root" -n "$label" -P -F '#{window_id}')
+  fi
+  tmux set-option -w -t "$id" @project_path "$root"
+  tmux set-option -w -t "$id" @project_label "$label"
+  tmux set-option -w -t "$id" automatic-rename off
+  printf '%s\n' "$id"
+}
+
+release_lock() { rmdir "$LOCK" 2>/dev/null || true; }
+
+ensure_window() {
+  local root id waited=0
+  root=$(project_root "$1")
+
+  id=$(window_for_root "$root")
+  if [[ -n $id ]]; then
+    printf '%s\n' "$id"
+    return
+  fi
+
+  # Two editors opening the same project at once must not each add a tab.
+  while ! mkdir "$LOCK" 2>/dev/null; do
+    sleep 0.1
+    waited=$((waited + 1))
+    if ((waited > 50)); then
+      release_lock
+      break
+    fi
+  done
+  trap release_lock EXIT
+
+  id=$(window_for_root "$root")
+  [[ -n $id ]] || id=$(create_window "$root")
+
+  release_lock
+  trap - EXIT
+  printf '%s\n' "$id"
+}
+
+window_label() { tmux show-option -w -t "$1" -qv @project_label; }
+
+mark_window() {
+  local id label
+  id=$(window_for_root "$(project_root "$1")")
+  [[ -n $id ]] || return 0 # no window for this project: never create one here
+  label=$(window_label "$id")
+  [[ -n $label ]] || return 0
+  tmux rename-window -t "$id" "${MARKER}${label}"
+}
+
+clear_window() {
+  local target=$1 id label
+  if [[ $target == @* ]]; then
+    id=$target # a window id, as the after-select-window hook passes
+  else
+    id=$(window_for_root "$(project_root "$target")")
+  fi
+  [[ -n $id ]] || return 0
+  label=$(window_label "$id")
+  [[ -n $label ]] || return 0 # not a project window, leave it alone
+  tmux rename-window -t "$id" "$label"
+}
+
+attach_session() {
+  tmux select-window -t "$(ensure_window "$1")"
+  [[ -z ${TMUX:-} ]] || return 0 # already inside tmux; sessions do not nest
+  tmux attach-session -t "=$SESSION"
+}
+
+require_directory() {
+  [[ -d $1 ]] || {
+    printf 'tmux-project: no such directory: %s\n' "$1" >&2
+    exit 66
+  }
+}
+
+main() {
+  local cmd=${1:-} path=${2:-$PWD}
+
+  case $cmd in
+    label)
+      require_directory "$path"
+      project_label "$(project_root "$path")"
+      ;;
+    ensure)
+      require_directory "$path"
+      ensure_window "$path"
+      ;;
+    select)
+      require_directory "$path"
+      tmux select-window -t "$(ensure_window "$path")"
+      ;;
+    attach)
+      require_directory "$path"
+      attach_session "$path"
+      ;;
+    mark)
+      require_directory "$path"
+      mark_window "$path"
+      ;;
+    clear)
+      [[ $path == @* ]] || require_directory "$path"
+      clear_window "$path"
+      ;;
+    *) usage ;;
+  esac
+}
+
+main "$@"

@@ -1,7 +1,7 @@
-UTIL_PATH="$HOME/git/personal/useful-commands"
+UTIL_PATH="${UTIL_PATH:-$HOME/git/personal/useful-commands}"
 # source $UTIL_PATH/.env
 #
-. $UTIL_PATH/passwords.sh # add passowrds env variables
+[ -f "$UTIL_PATH/passwords.sh" ] && . "$UTIL_PATH/passwords.sh" # add passowrds env variables
 
 setup-tmux() {
   ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
@@ -14,10 +14,7 @@ setup-nvim() {
 }
 
 tcode() {
-  local window_name=$(basename "$PWD")
-  tmux new-session -AD -s code
-
-  tmux list-windows -t code -F '#W' | grep -q "^$window_name$" || tmux new-window -n $window_name -t code -d
+  tmux-project select "$PWD"
   code .
 }
 
@@ -125,6 +122,7 @@ alias nv="nvim"
 alias td="tmux detach"
 alias ta="tmux new-session -A -s"
 alias ts="tmux-sessionizer"
+alias twt="tmux-worktrees"
 alias tls="tmux attach -t \$(tmux ls | fzf | cut -d':' -f1)"
 alias change-to-gui="sudo systemctl isolate graphical.target"
 alias change-to-cli="sudo systemctl isolate multi-user.target"

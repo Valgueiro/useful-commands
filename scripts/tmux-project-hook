@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# ABOUTME: Bridges Claude Code hook events onto the tmux window for the session's directory.
+# ABOUTME: Flags the window when Claude wants attention and clears it once you reply.
+
+set -uo pipefail
+
+PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
+
+action=${1:-}
+payload=$(cat)
+cwd=$(printf '%s' "$payload" | jq -r '.cwd // empty' 2>/dev/null)
+
+# A hook must never fail a Claude Code turn, so every path exits 0.
+if [[ -n $action && -n $cwd && -d $cwd ]]; then
+  "$SCRIPT_DIR/tmux-project" "$action" "$cwd" >/dev/null 2>&1 || true
+fi
+
+exit 0

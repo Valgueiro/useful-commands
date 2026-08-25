@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# ABOUTME: Picks a worktree of the current repository with fzf.
+# ABOUTME: Opens or focuses its VSCode window and selects its tmux window.
+
+set -euo pipefail
+
+PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
+
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "tmux-worktrees: not inside a git repository" >&2
+  exit 1
+fi
+
+# --porcelain emits a "worktree <path>" line followed by either "branch <ref>"
+# or "detached", so the branch is buffered until its worktree is known.
+worktrees=$(git worktree list --porcelain | awk '
+  /^worktree /  { path = substr($0, 10) }
+  /^branch /    { ref = substr($0, 8); sub("refs/heads/", "", ref); print ref "\t" path }
+  /^detached$/  { print "(detached)\t" path }
+')
+
+if [[ -z $worktrees ]]; then
+  echo "tmux-worktrees: no worktrees found" >&2
+  exit 1
+fi
+
+selected=$(
+  printf '%s\n' "$worktrees" |
+    fzf --delimiter='\t' --with-nth='1,2' --nth='1' \
+      --header='select a worktree' \
+      --preview 'git -C {2} status --short --branch; echo; git -C {2} log --oneline -10' \
+      --preview-window='right,55%'
+) || exit 0
+
+path=$(printf '%s' "$selected" | cut -f2)
+[[ -n $path ]] || exit 0
+
+"$SCRIPT_DIR/tmux-project" select "$path"
+code "$path"
