@@ -58,7 +58,8 @@ check() {
 # Fixtures: a checkout, a worktree with a stardust-style hashed directory, a plain directory.
 repo="$workdir/checkout"
 git init -q "$repo"
-git -C "$repo" -c user.email=t@t -c user.name=t commit -q --allow-empty -m init
+git -C "$repo" -c user.email=t@t -c user.name=t -c commit.gpgsign=false \
+  commit -q --allow-empty -m init
 mkdir -p "$repo/nested/deep"
 
 worktree="$workdir/trees/add-widget-c3b5eeac"
@@ -97,6 +98,21 @@ check 'ensure: repo root and subdirectory share one window' \
   "$from_subdir" "$("$TMUX_PROJECT" ensure "$repo")"
 check 'ensure: sharing adds no tab' '2' "$(window_count)"
 
+# A window can exist with the right name but no identity, because new-window
+# names it before set-option runs. An interrupted create leaves that behind, and
+# it must be adopted rather than duplicated.
+orphaned="$workdir/trees/orphan-branch-9f9f9f"
+git -C "$repo" worktree add -q -b orphan-branch "$orphaned" >/dev/null
+orphan=$(tmuxt new-window -d -t '=code' -c "$orphaned" -n 'checkout/orphan-branch' -P -F '#{window_id}')
+before_adoption=$(window_count)
+check 'ensure: adopts a matching window that carries no identity' \
+  "$orphan" "$("$TMUX_PROJECT" ensure "$orphaned")"
+check 'ensure: adoption adds no tab' "$before_adoption" "$(window_count)"
+check 'ensure: adoption writes the identity onto the adopted window' \
+  "$orphaned" "$(tmuxt show-option -w -t "$orphan" -qv @project_path)"
+check 'ensure: the adopted window is then found by identity' \
+  "$orphan" "$("$TMUX_PROJECT" ensure "$orphaned")"
+
 # Review marker
 "$TMUX_PROJECT" mark "$worktree"
 check 'mark: prefixes the window name with a bell' \
@@ -122,6 +138,35 @@ check 'clear: on an unmarked window is a no-op' \
 before=$(window_count)
 "$TMUX_PROJECT" mark "$plain"
 check 'mark: an unknown directory never creates a window' "$before" "$(window_count)"
+
+# The marker is not restricted to windows this tool created. A window opened by
+# hand, carrying no identity and left on automatic-rename, must still take it.
+scratch="$workdir/scratch"
+mkdir -p "$scratch"
+handmade=$(tmuxt new-window -d -t '=code' -c "$scratch" -P -F '#{window_id}')
+tmuxt set-option -w -t "$handmade" automatic-rename on
+handmade_name=$(window_name "$handmade")
+
+"$TMUX_PROJECT" mark "$scratch"
+check 'mark: marks a hand-made window that has no project identity' \
+  "🔔 $handmade_name" "$(window_name "$handmade")"
+check 'mark: disables automatic-rename so the shell cannot erase the marker' \
+  'off' "$(tmuxt show-option -w -t "$handmade" -qv automatic-rename)"
+check 'mark: claims no project identity on a hand-made window' \
+  '' "$(tmuxt show-option -w -t "$handmade" -qv @project_path)"
+
+"$TMUX_PROJECT" clear "$scratch"
+check 'clear: restores a hand-made window to its original name' \
+  "$handmade_name" "$(window_name "$handmade")"
+check 'clear: restores automatic-rename it turned off' \
+  'on' "$(tmuxt show-option -w -t "$handmade" -qv automatic-rename)"
+
+# A session in a parent directory must not sweep up every window beneath it
+"$TMUX_PROJECT" mark "$workdir"
+check 'mark: a parent directory does not mark windows of nested projects' \
+  'checkout/add-widget' "$(window_name "$first")"
+check 'mark: a parent directory does not mark hand-made nested windows' \
+  "$handmade_name" "$(window_name "$handmade")"
 
 printf '\n%d passed, %d failed\n' "$passed" "$failed"
 [[ $failed -eq 0 ]]

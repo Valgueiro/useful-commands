@@ -49,8 +49,18 @@ Claude Code hooks prefix a window with 🔔 when that session wants attention:
 | `UserPromptSubmit` | cleared |
 
 Selecting the window also clears it, via the `after-select-window` hook in
-`.tmux.conf`. A session whose project has no tmux window is ignored rather than
-given one.
+`.tmux.conf`.
+
+The marker is not restricted to windows these commands created. A mark lands on
+every window whose directory belongs to the session's project, so a session you
+started by hand and `cd`'d into the worktree gets marked too. Matching compares
+resolved project roots rather than path prefixes, so a session running in a
+parent directory does not sweep up the windows of every project beneath it.
+
+Marking saves whatever the window was called and restores it on clear, and turns
+`automatic-rename` off for as long as the marker is up, since otherwise the
+shell renames the window and the marker vanishes. A project with no window at
+all is left alone rather than given one.
 
 Because several VSCode windows attach to the same `code` session, they share the
 active window: opening a terminal in one VSCode window moves the other attached
