@@ -20,16 +20,18 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Route every tmux call made by tmux-project onto the throwaway socket.
+# Route every tmux call made by tmux-project onto the throwaway socket. -f
+# /dev/null keeps the real ~/.tmux.conf out: its automatic-rename and
+# after-select-window hook would otherwise rename windows mid-test.
 mkdir -p "$workdir/bin"
 cat >"$workdir/bin/tmux" <<EOF
 #!/usr/bin/env bash
-exec "$REAL_TMUX" -S "$SOCKET" "\$@"
+exec "$REAL_TMUX" -f /dev/null -S "$SOCKET" "\$@"
 EOF
 chmod +x "$workdir/bin/tmux"
 export PATH="$workdir/bin:$PATH"
 
-tmuxt() { "$REAL_TMUX" -S "$SOCKET" "$@"; }
+tmuxt() { "$REAL_TMUX" -f /dev/null -S "$SOCKET" "$@"; }
 window_count() { tmuxt list-windows -a 2>/dev/null | wc -l | tr -d ' '; }
 window_name() { tmuxt display-message -p -t "$1" '#{window_name}'; }
 
@@ -139,33 +141,47 @@ before=$(window_count)
 "$TMUX_PROJECT" mark "$plain"
 check 'mark: an unknown directory never creates a window' "$before" "$(window_count)"
 
-# The marker is not restricted to windows this tool created. A window opened by
-# hand, carrying no identity and left on automatic-rename, must still take it.
+# A mark must reach exactly one window. Several windows can sit in the same
+# directory, and flagging all of them makes the marker useless.
+crowd=$(tmuxt new-window -d -t '=code' -c "$worktree" -P -F '#{window_id}')
+crowd_name=$(window_name "$crowd")
+"$TMUX_PROJECT" mark "$worktree"
+check 'mark: flags the project window' \
+  '🔔 checkout/add-widget' "$(window_name "$first")"
+check 'mark: does not flag another window sitting in the same directory' \
+  "$crowd_name" "$(window_name "$crowd")"
+"$TMUX_PROJECT" clear "$worktree"
+tmuxt kill-window -t "$crowd"
+
+# Claude running inside tmux passes TMUX_PANE through to its hooks, which names
+# the window exactly, even one opened by hand with no project identity.
 scratch="$workdir/scratch"
 mkdir -p "$scratch"
 handmade=$(tmuxt new-window -d -t '=code' -c "$scratch" -P -F '#{window_id}')
 tmuxt set-option -w -t "$handmade" automatic-rename on
+handmade_pane=$(tmuxt display-message -p -t "$handmade" '#{pane_id}')
 handmade_name=$(window_name "$handmade")
 
-"$TMUX_PROJECT" mark "$scratch"
-check 'mark: marks a hand-made window that has no project identity' \
+TMUX_PANE="$handmade_pane" "$TMUX_PROJECT" mark "$scratch"
+check 'mark: TMUX_PANE flags a hand-made window with no project identity' \
   "🔔 $handmade_name" "$(window_name "$handmade")"
 check 'mark: disables automatic-rename so the shell cannot erase the marker' \
   'off' "$(tmuxt show-option -w -t "$handmade" -qv automatic-rename)"
 check 'mark: claims no project identity on a hand-made window' \
   '' "$(tmuxt show-option -w -t "$handmade" -qv @project_path)"
 
-"$TMUX_PROJECT" clear "$scratch"
+TMUX_PANE="$handmade_pane" "$TMUX_PROJECT" clear "$scratch"
 check 'clear: restores a hand-made window to its original name' \
   "$handmade_name" "$(window_name "$handmade")"
 check 'clear: restores automatic-rename it turned off' \
   'on' "$(tmuxt show-option -w -t "$handmade" -qv automatic-rename)"
 
-# A session in a parent directory must not sweep up every window beneath it
-"$TMUX_PROJECT" mark "$workdir"
-check 'mark: a parent directory does not mark windows of nested projects' \
-  'checkout/add-widget' "$(window_name "$first")"
-check 'mark: a parent directory does not mark hand-made nested windows' \
+# Without TMUX_PANE there is nothing representing a bare directory, so no window
+# is touched and none is invented.
+before=$(window_count)
+"$TMUX_PROJECT" mark "$scratch"
+check 'mark: a directory with no window is left alone' "$before" "$(window_count)"
+check 'mark: and marks nothing by proximity' \
   "$handmade_name" "$(window_name "$handmade")"
 
 printf '\n%d passed, %d failed\n' "$passed" "$failed"

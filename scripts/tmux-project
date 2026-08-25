@@ -120,21 +120,21 @@ ensure_window() {
   printf '%s\n' "$id"
 }
 
-windows_in_project() {
-  # Marking is not limited to windows this tool created: any window whose
-  # directory belongs to the same project counts, so a session started by hand
-  # is marked too. Comparing resolved roots rather than path prefixes keeps a
-  # session in $HOME from marking every window under it.
-  local root=$1 id identity path
-  while IFS=$'\t' read -r id identity path; do
-    [[ -n $id ]] || continue
-    if [[ $identity == "$root" ]]; then
-      printf '%s\n' "$id"
-      continue
-    fi
-    [[ -n $path && -d $path ]] || continue
-    [[ $(project_root "$path") == "$root" ]] && printf '%s\n' "$id"
-  done < <({ tmux list-windows -a -F "#{window_id}"$'\t'"#{@project_path}"$'\t'"#{pane_current_path}" 2>/dev/null || true; })
+# When Claude runs inside tmux its hooks inherit TMUX_PANE, which names the exact
+# window it occupies. Nothing else identifies it as precisely, and it works for a
+# window opened by hand that carries no project identity.
+window_from_env() {
+  [[ -n ${TMUX_PANE:-} ]] || return 0
+  tmux display-message -p -t "$TMUX_PANE" '#{window_id}' 2>/dev/null || true
+}
+
+# Exactly one window, never a sweep: several windows can sit in one directory and
+# only the one Claude occupies, or the project's own window, should be flagged.
+target_window() {
+  local id
+  id=$(window_from_env)
+  [[ -n $id ]] || id=$(window_for_root "$1")
+  printf '%s\n' "$id"
 }
 
 # The marker saves whatever the window was called and restores it later, so it
@@ -164,9 +164,9 @@ clear_one() {
 
 mark_window() {
   local id
-  for id in $(windows_in_project "$(project_root "$1")"); do
-    mark_one "$id"
-  done
+  id=$(target_window "$(project_root "$1")")
+  [[ -n $id ]] || return 0 # nothing represents this project: never create one here
+  mark_one "$id"
 }
 
 clear_window() {
@@ -175,9 +175,9 @@ clear_window() {
     clear_one "$target" # a window id, as the after-select-window hook passes
     return
   fi
-  for id in $(windows_in_project "$(project_root "$target")"); do
-    clear_one "$id"
-  done
+  id=$(target_window "$(project_root "$target")")
+  [[ -n $id ]] || return 0
+  clear_one "$id"
 }
 
 attach_session() {
