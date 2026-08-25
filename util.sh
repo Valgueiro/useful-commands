@@ -1,104 +1,111 @@
 UTIL_PATH="$HOME/git/personal/useful-commands"
 # source $UTIL_PATH/.env
+#
+. $UTIL_PATH/passwords.sh # add passowrds env variables
 
-setup-tmux(){
-	ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+setup-tmux() {
+  ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
-
-setup-nvim(){
-	ln -fs $UTIL_PATH/dotfiles/nvim ~/.config/nvim
-	ln -fs $UTIL_PATH/dotfiles/vimrc ~/.vimrc
+setup-nvim() {
+  ln -fs $UTIL_PATH/dotfiles/nvim ~/.config/nvim
+  ln -fs $UTIL_PATH/dotfiles/vimrc ~/.vimrc
 }
 
-init-language-servers(){
-	setup-nvm
-	npm i -g bash-language-server
+tcode() {
+  local window_name=$(basename "$PWD")
+  tmux new-session -AD -s code
 
-	go install golang.org/x/tools/gopls@latest
-	go install golang.org/x/tools/cmd/goimports@latest
-
-	pip3 install ansible-lint
+  tmux list-windows -t code -F '#W' | grep -q "^$window_name$" || tmux new-window -n $window_name -t code -d
+  code .
 }
 
-setup-nvm(){
-	export NVM_DIR="$HOME/.nvm"
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-	#nvm alias default node
-	#nvm use --lts
+init-language-servers() {
+  setup-nvm
+  npm i -g bash-language-server
+
+  go install golang.org/x/tools/gopls@latest
+  go install golang.org/x/tools/cmd/goimports@latest
+
+  pip3 install ansible-lint
 }
 
-setup-all(){
-	setup-tmux
-	setup-nvm
+setup-nvm() {
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+  #nvm alias default node
+  #nvm use --lts
 }
 
-process-by-port(){
-        ## Show processes that are running on specific port
-        ## $1 - port number
-        sudo lsof -i -P -n | awk '/LISTEN/ && /'.$1.'/'
+setup-all() {
+  setup-tmux
+  setup-nvm
 }
 
-kill-process-by-port(){
-        ## Kill processes that are running on specific port
-        ## $1 - port number
-	sudo kill -3 $(process-by-port $1 | awk '{print $2}') 
+process-by-port() {
+  ## Show processes that are running on specific port
+  ## $1 - port number
+  sudo lsof -i -P -n | awk '/LISTEN/ && /'.$1.'/'
+}
+
+kill-process-by-port() {
+  ## Kill processes that are running on specific port
+  ## $1 - port number
+  sudo kill -3 $(process-by-port $1 | awk '{print $2}')
 }
 # ansible
-shell-ansible(){
-	inventory_file=$1
-	cmd=$2
-	ansible -b -i $inventory_file all -m shell -a '$cmd'
+shell-ansible() {
+  inventory_file=$1
+  cmd=$2
+  ansible -b -i $inventory_file all -m shell -a '$cmd'
 }
 
 # K8s
 
-force-delete-pod(){
-        ## Force delete pods
-        ## $1 - pod name
-        ## $2 - namespace
-	kubectl delete pod $1 --grace-period=0 --force --namespace $2	
+force-delete-pod() {
+  ## Force delete pods
+  ## $1 - pod name
+  ## $2 - namespace
+  kubectl delete pod $1 --grace-period=0 --force --namespace $2
 }
 
-delete-failed-pods(){
-    kubectl delete pods  -A --field-selector status.phase=Failed
+delete-failed-pods() {
+  kubectl delete pods -A --field-selector status.phase=Failed
 }
 
 decode-secret() {
-	secret_name=$1
-	namespace=$2
-	key=$3
-	kubectl -n $namespace get secrets $secret_name --template={{.data.$3}} | base64 -d
+  secret_name=$1
+  namespace=$2
+  key=$3
+  kubectl -n $namespace get secrets $secret_name --template={{.data.$3}} | base64 -d
 }
 
-
-fix-logi-options(){
-	kill -9 $(ps aux | grep "MacOS/logioptionsplus_agent" | grep -v grep | awk '{print $2}')
+fix-logi-options() {
+  kill -9 $(ps aux | grep "MacOS/logioptionsplus_agent" | grep -v grep | awk '{print $2}')
 }
 
-get-my-ip(){
-	dig +short myip.opendns.com @resolver1.opendns.com
+get-my-ip() {
+  dig +short myip.opendns.com @resolver1.opendns.com
 }
 
-cheat(){
-	# $1 command that you want to receive a cheatsheet from
-	curl cheat.sh/$1 | less
+cheat() {
+  # $1 command that you want to receive a cheatsheet from
+  curl cheat.sh/$1 | less
 }
 
-zcode(){
-	z $1 && code . && cd -
+zcode() {
+  z $1 && code . && cd -
 }
 
-
-zvim(){
-	z $1 && vim . && z -
+zvim() {
+  z $1 && vim . && z -
 }
 
 run_always() {
-	# empty
-	echo "nothing to run"
+  # empty
+  echo "nothing to run"
 }
 
 # Exports
@@ -107,6 +114,8 @@ export PATH="$PATH:$GOROOT/bin:$GOPATH/bin:$UTIL_PATH/scripts"
 export EDITOR=nvim
 export KUBE_EDITOR=nvim
 export _ZO_ECHO=1
+export NODE_EXTRA_CA_CERTS=~/bundle.pem
+export AWS_PAGER=""
 
 # My aliases
 alias k="kubectl"
@@ -114,11 +123,13 @@ alias tf="terraform"
 alias vim="nvim"
 alias nv="nvim"
 alias td="tmux detach"
-alias ta="tmux attach -t 0 || tmux"
+alias ta="tmux new-session -A -s"
 alias ts="tmux-sessionizer"
+alias tls="tmux attach -t \$(tmux ls | fzf | cut -d':' -f1)"
 alias change-to-gui="sudo systemctl isolate graphical.target"
 alias change-to-cli="sudo systemctl isolate multi-user.target"
 alias python="python3"
+alias opencode="genai-opencode"
 ## Mobral it to origin
 alias git-mobral="git add . && git commit --amend --no-edit && git push -f"
 
