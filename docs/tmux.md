@@ -19,6 +19,7 @@ Opening the same project twice reuses its window instead of adding a tab.
 | `twt` | Picks a worktree of the current repo with fzf, then opens VSCode on it and selects its tmux window |
 | `twtd` | Picks a worktree with fzf, then deletes the worktree directory and its tmux window |
 | `twtc <branch> [commitish]` | Creates a worktree at `<container>/<branch>` on a new branch, then opens VSCode on it and selects its tmux window |
+| `twtp <branch>` | Fetches a branch from origin and adds a worktree at `<container>/<branch>` tracking it, then opens VSCode on it and selects its tmux window |
 | `tmux-project <cmd> [path]` | The underlying tool: `label`, `ensure`, `select`, `attach`, `kill`, `mark`, `clear` |
 
 Opening a terminal inside VSCode runs `ta code`, so the terminal attaches to the

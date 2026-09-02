@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ABOUTME: Picks a worktree of the current repository with fzf.
-# ABOUTME: Opens its VSCode window, deletes it, or creates a new one by branch.
+# ABOUTME: Opens its VSCode window, deletes it, or adds one from a new or origin branch.
 
 set -euo pipefail
 
@@ -12,9 +12,10 @@ mode=${1:-open}
 case $mode in
   open) header='select a worktree' ;;
   delete) header='select a worktree to DELETE' ;;
-  create) ;;
+  create) usage='usage: twtc <branch> [commitish]' ;;
+  pull) usage='usage: twtp <branch>' ;;
   *)
-    echo "tmux-worktrees: unknown mode: $mode (want open, delete or create)" >&2
+    echo "tmux-worktrees: unknown mode: $mode (want open, delete, create or pull)" >&2
     exit 64
     ;;
 esac
@@ -24,14 +25,14 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
   exit 1
 fi
 
-# A new worktree lives beside the other branches, in the container that holds the
-# repository's git directory: <container>/<branch>. See the worktree-container
-# layout, e.g. hwetda-iac/main next to hwetda-iac/some-branch.
-if [[ $mode == create ]]; then
+# create and pull both add a worktree beside the other branches, in the container
+# that holds the repository's git directory: <container>/<branch>. See the
+# worktree-container layout, e.g. hwetda-iac/main next to hwetda-iac/some-branch.
+# create starts a new branch; pull fetches an existing one from origin.
+if [[ $mode == create || $mode == pull ]]; then
   branch=${2:-}
-  commitish=${3:-}
   [[ -n $branch ]] || {
-    echo "usage: twtc <branch> [commitish]" >&2
+    echo "$usage" >&2
     exit 64
   }
 
@@ -42,7 +43,13 @@ if [[ $mode == create ]]; then
     exit 1
   fi
 
-  git worktree add -b "$branch" "$path" ${commitish:+"$commitish"}
+  if [[ $mode == create ]]; then
+    commitish=${3:-}
+    git worktree add -b "$branch" "$path" ${commitish:+"$commitish"}
+  else
+    git fetch origin "$branch"
+    git worktree add "$path" "$branch"
+  fi
 
   "$SCRIPT_DIR/tmux-project" select "$path"
   code "$path"
