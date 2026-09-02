@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
 # ABOUTME: Picks a worktree of the current repository with fzf.
-# ABOUTME: Opens or focuses its VSCode window and selects its tmux window.
+# ABOUTME: Opens its VSCode window, or deletes the worktree and its tmux window.
 
 set -euo pipefail
 
 PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
+
+mode=${1:-open}
+case $mode in
+  open) header='select a worktree' ;;
+  delete) header='select a worktree to DELETE' ;;
+  *)
+    echo "tmux-worktrees: unknown mode: $mode (want open or delete)" >&2
+    exit 64
+    ;;
+esac
 
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
   echo "tmux-worktrees: not inside a git repository" >&2
@@ -29,7 +39,7 @@ fi
 selected=$(
   printf '%s\n' "$worktrees" |
     fzf --delimiter='\t' --with-nth='1,2' --nth='1' \
-      --header='select a worktree' \
+      --header="$header" \
       --preview 'git -C {2} status --short --branch; echo; git -C {2} log --oneline -10' \
       --preview-window='right,55%'
 ) || exit 0
@@ -37,5 +47,28 @@ selected=$(
 path=$(printf '%s' "$selected" | cut -f2)
 [[ -n $path ]] || exit 0
 
-"$SCRIPT_DIR/tmux-project" select "$path"
-code "$path"
+if [[ $mode == open ]]; then
+  "$SCRIPT_DIR/tmux-project" select "$path"
+  code "$path"
+  exit 0
+fi
+
+# git refuses to remove the main worktree, so deletion only ever touches a
+# linked one. The tmux window is closed first, while its directory still exists
+# for the lookup; a removal aborted at the force prompt just leaves a window that
+# reopening with twt recreates.
+label=$("$SCRIPT_DIR/tmux-project" label "$path")
+printf 'Delete worktree %s (%s)? [y/N] ' "$label" "$path" >&2
+read -r reply
+[[ $reply == [yY] ]] || { echo "aborted" >&2; exit 0; }
+
+"$SCRIPT_DIR/tmux-project" kill "$path"
+
+if ! git worktree remove "$path"; then
+  printf 'force delete despite the above? [y/N] ' >&2
+  read -r reply
+  [[ $reply == [yY] ]] || { echo "aborted" >&2; exit 0; }
+  git worktree remove --force "$path"
+fi
+
+printf 'deleted %s\n' "$label" >&2

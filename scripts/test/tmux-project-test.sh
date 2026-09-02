@@ -80,6 +80,21 @@ check 'label: non-git directory falls back to basename' \
 check 'label: subdirectory resolves to its repo' \
   'checkout' "$("$TMUX_PROJECT" label "$repo/nested/deep")"
 
+# The repo part of a label is the last hyphen segment, capped at eight chars.
+longrepo="$workdir/my-cool-toolbelt-service"
+git init -q "$longrepo"
+git -C "$longrepo" -c user.email=t@t -c user.name=t -c commit.gpgsign=false \
+  commit -q --allow-empty -m init
+check 'label: long repo name shrinks to its last hyphen segment, capped at 8' \
+  'service' "$("$TMUX_PROJECT" label "$longrepo")"
+
+verbose="$workdir/one-verylongword"
+git init -q "$verbose"
+git -C "$verbose" -c user.email=t@t -c user.name=t -c commit.gpgsign=false \
+  commit -q --allow-empty -m init
+check 'label: a long final segment is truncated to eight chars' \
+  'verylong' "$("$TMUX_PROJECT" label "$verbose")"
+
 # Window creation
 first=$("$TMUX_PROJECT" ensure "$worktree")
 check 'ensure: creating the session leaves no stray default window' \
@@ -177,12 +192,13 @@ check 'clear: restores automatic-rename it turned off' \
   'on' "$(tmuxt show-option -w -t "$handmade" -qv automatic-rename)"
 
 # Without TMUX_PANE there is nothing representing a bare directory, so no window
-# is touched and none is invented.
+# is touched and none is invented. automatic-rename is on here, so the shell may
+# rename the window on its own; the check is only that no marker was added.
 before=$(window_count)
 "$TMUX_PROJECT" mark "$scratch"
 check 'mark: a directory with no window is left alone' "$before" "$(window_count)"
-check 'mark: and marks nothing by proximity' \
-  "$handmade_name" "$(window_name "$handmade")"
+after=$(window_name "$handmade")
+check 'mark: and marks nothing by proximity' "${after#🔔 }" "$after"
 
 printf '\n%d passed, %d failed\n' "$passed" "$failed"
 [[ $failed -eq 0 ]]

@@ -17,20 +17,22 @@ Opening the same project twice reuses its window instead of adding a tab.
 | --- | --- |
 | `tcode` | Opens VSCode on the current directory and selects its tmux window |
 | `twt` | Picks a worktree of the current repo with fzf, then opens VSCode on it and selects its tmux window |
-| `tmux-project <cmd> [path]` | The underlying tool: `label`, `ensure`, `select`, `attach`, `mark`, `clear` |
+| `twtd` | Picks a worktree with fzf, then deletes the worktree directory and its tmux window |
+| `tmux-project <cmd> [path]` | The underlying tool: `label`, `ensure`, `select`, `attach`, `kill`, `mark`, `clear` |
 
-Opening a terminal inside VSCode runs `tmux-project attach`, so the terminal lands
-on the window belonging to whatever folder that VSCode window has open.
+Opening a terminal inside VSCode runs `ta code`, so the terminal attaches to the
+shared `code` session and lands on its active window.
 
 ### Window names
 
 Names come from git, not from the directory, because worktree directories carry a
-generated hash:
+generated hash. The repository part keeps only its last hyphen-separated segment,
+capped at eight characters, so the tab bar stays short:
 
 | Directory | Window |
 | --- | --- |
-| `~/git/personal/useful-commands` | `useful-commands` |
-| `~/.stardust/worktrees/useful-commands-9848c409/update-tcode-c3b5eeac` | `useful-commands/update-tcode` |
+| `~/git/personal/useful-commands` | `commands` |
+| `~/.stardust/worktrees/useful-commands-9848c409/update-tcode-c3b5eeac` | `commands/update-tcode` |
 | a directory outside git | its basename |
 
 A window is identified by its `@project_path` option, which holds the git
@@ -74,7 +76,7 @@ terminals to that window too.
 `setup-tmux` links `.tmux.conf`. Two settings files live outside this repo and
 hold unrelated configuration, so they are edited in place rather than linked:
 
-- VSCode `settings.json` -> `"terminal.integrated.env.osx": { "ZSH_INIT_COMMAND": "tmux-project attach" }`
+- VSCode `settings.json` -> `"terminal.integrated.env.osx": { "ZSH_INIT_COMMAND": "ta code" }`
 - `~/.claude/settings.json` -> four `tmux-project-hook` entries, appended alongside any existing hooks
 
 Both point at `~/git/personal/useful-commands/scripts`, so the scripts have to be

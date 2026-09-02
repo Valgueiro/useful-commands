@@ -19,6 +19,7 @@ usage: tmux-project <command> [path]
   ensure <path>            print the window for a directory, creating it if absent
   select <path>            ensure the window, then make it the current one
   attach <path>            ensure and select the window, then attach the session
+  kill   <path>            close the window for a directory, if it has one
   mark   <path>            flag the window as waiting for review
   clear  <path|window-id>  remove the waiting-for-review flag
 
@@ -42,7 +43,7 @@ project_label() {
     return
   fi
   common_dir=$(git -C "$root" rev-parse --path-format=absolute --git-common-dir)
-  repo=$(basename "$(dirname "$common_dir")")
+  repo=$(short_repo "$(basename "$(dirname "$common_dir")")")
   if [[ $git_dir == "$common_dir" ]]; then
     echo "$repo"
     return
@@ -50,6 +51,13 @@ project_label() {
   branch=$(git -C "$root" symbolic-ref --short HEAD 2>/dev/null) ||
     branch=$(git -C "$root" rev-parse --short HEAD)
   echo "$repo/$branch"
+}
+
+# Repository names get long, so the label keeps only the last hyphen-separated
+# segment, capped at eight characters, to spare the tmux tab bar.
+short_repo() {
+  local name=${1##*-}
+  printf '%s\n' "${name:0:8}"
 }
 
 # Windows are matched on @project_path rather than on their name, so renaming a
@@ -186,6 +194,15 @@ attach_session() {
   tmux attach-session -t "=$SESSION"
 }
 
+# Closing a project's window is best-effort: a directory with no window is
+# already in the desired state.
+kill_window() {
+  local id
+  id=$(window_for_root "$(project_root "$1")")
+  [[ -n $id ]] || return 0
+  tmux kill-window -t "$id"
+}
+
 require_directory() {
   [[ -d $1 ]] || {
     printf 'tmux-project: no such directory: %s\n' "$1" >&2
@@ -212,6 +229,10 @@ main() {
     attach)
       require_directory "$path"
       attach_session "$path"
+      ;;
+    kill)
+      require_directory "$path"
+      kill_window "$path"
       ;;
     mark)
       require_directory "$path"
