@@ -4,8 +4,10 @@ UTIL_PATH="${UTIL_PATH:-$HOME/git/personal/useful-commands}"
 [ -f "$UTIL_PATH/passwords.sh" ] && . "$UTIL_PATH/passwords.sh" # add passowrds env variables
 
 setup-tmux() {
+  brew install --cask font-monaspace-nerd-font font-noto-sans-symbols-2
+  brew install bash bc coreutils gawk gh glab gsed jq nowplaying-cli
   ln -fs $UTIL_PATH/dotfiles/.tmux.conf ~/.tmux.conf
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  [ ! -d "$HOME/.tmux/plugins/tpm" ] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
 setup-nvim() {
